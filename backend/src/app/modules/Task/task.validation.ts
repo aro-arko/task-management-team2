@@ -17,9 +17,12 @@ const UpdateTaskValidation = z.object({
     description: z.string().optional(),
     priority: z.enum(["low", "medium", "high"]).optional(),
     status: z.enum(["completed", "in-complete"]).optional(),
-    deadline: z.string().refine((date) => new Date(date) > new Date(), {
-      message: "Deadline must be a future date",
-    }),
+    deadline: z
+      .string()
+      .refine((date) => new Date(date) > new Date(), {
+        message: "Deadline must be a future date",
+      })
+      .optional(),
   }),
 });
 
