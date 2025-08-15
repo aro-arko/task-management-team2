@@ -46,6 +46,45 @@ const createTask = async (currentUser: JwtPayload, payLoad: TTask) => {
   }
 };
 
+// complete task
+const completeTask = async (id: string, data: { timeSpent: number }) => {
+  const task = await Task.findById(id).select({
+    userId: 1,
+    timeSpent: 1,
+    status: 1,
+    category: 1,
+  });
+  if (!task) throw new Error("Task not found");
+
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+
+    // Update task
+    task.timeSpent = data.timeSpent;
+    task.status = "completed";
+    await task.save({ session });
+
+    // If task category is "Self Improvement", update user timeSpent
+    if (task.category === "Self Improvement") {
+      // update user
+      const user = await User.findById(task.userId).session(session);
+      if (!user) throw new Error("User not found");
+
+      user.timeSpent += data.timeSpent;
+      await user.save({ session });
+    }
+
+    await session.commitTransaction();
+    return task;
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
+  }
+};
+
 // update task
 const updateTask = async (
   taskId: string,
@@ -123,7 +162,7 @@ const getAllTasks = async (
   const queryBuilder = new QueryBuilder(Task.find({ userId: user._id }), query);
 
   const tasks = await queryBuilder
-    .search(["title", "description"])
+    .search(["title"])
     .filter()
     .sort()
     .paginate()
@@ -135,6 +174,7 @@ const getAllTasks = async (
 
 export const TaskService = {
   createTask,
+  completeTask,
   updateTask,
   deleteTask,
   getAllTasks,

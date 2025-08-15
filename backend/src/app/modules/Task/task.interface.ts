@@ -2,9 +2,11 @@ import { Types } from "mongoose";
 
 export type TTask = {
   title: string;
-  description: string;
-  priority: "low" | "medium" | "high";
-  status: "completed" | "in-complete";
-  deadline: Date;
   userId: Types.ObjectId;
+  startDate: Date | string;
+  endDate: Date | string;
+  category: "Self Improvement" | "Workout" | "Extra Curricular" | "Others";
+  priority: "High" | "Medium" | "Low";
+  timeSpent: number;
+  status: "completed" | "pending" | "expired";
 };

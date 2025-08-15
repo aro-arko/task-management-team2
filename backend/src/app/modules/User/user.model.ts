@@ -23,7 +23,7 @@ const userSchema = new Schema<TUser>(
       enum: ["admin", "user"],
       default: "user",
     },
-    points: {
+    timeSpent: {
       type: Number,
       default: 0,
     },

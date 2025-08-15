@@ -18,13 +18,29 @@ router.post(
 // get all tasks
 router.get("/", auth(USER_ROLE.user), TaskController.getAllTasks);
 
-// update task
-router.patch(
-  "/update/:id",
+// complete task
+router.put(
+  "/complete/:id",
   auth(USER_ROLE.user),
-  validateRequest(TaskValidation.UpdateTaskValidation),
-  TaskController.updateTask
+  validateRequest(TaskValidation.CompleteTaskValidation),
+  TaskController.completeTask
 );
+
+// // create task
+// router.post(
+//   "/create",
+//   auth(USER_ROLE.user),
+//   validateRequest(TaskValidation.CreateTaskValidation),
+//   TaskController.createTask
+// );
+
+// // update task
+// router.patch(
+//   "/update/:id",
+//   auth(USER_ROLE.user),
+//   validateRequest(TaskValidation.UpdateTaskValidation),
+//   TaskController.updateTask
+// );
 
 // delete task
 router.delete("/delete/:id", auth(USER_ROLE.user), TaskController.deleteTask);

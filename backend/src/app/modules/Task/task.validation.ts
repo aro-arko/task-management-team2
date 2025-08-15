@@ -3,30 +3,24 @@ import z from "zod";
 const CreateTaskValidation = z.object({
   body: z.object({
     title: z.string().min(1, "Title is required"),
-    description: z.string().optional(),
-    priority: z.enum(["low", "medium", "high"]).default("low"),
-    deadline: z.string().refine((date) => new Date(date) > new Date(), {
-      message: "Deadline must be a future date",
-    }),
+    startDate: z.string(),
+    endDate: z.string().optional(),
+    category: z.enum([
+      "Self Improvement",
+      "Workout",
+      "Extra Curricular",
+      "Others",
+    ]),
   }),
 });
 
-const UpdateTaskValidation = z.object({
+const CompleteTaskValidation = z.object({
   body: z.object({
-    title: z.string().min(1, "Title is required").optional(),
-    description: z.string().optional(),
-    priority: z.enum(["low", "medium", "high"]).optional(),
-    status: z.enum(["completed", "in-complete"]).optional(),
-    deadline: z
-      .string()
-      .refine((date) => new Date(date) > new Date(), {
-        message: "Deadline must be a future date",
-      })
-      .optional(),
+    timeSpent: z.number().min(0, "Time spent must be positive"),
   }),
 });
 
 export const TaskValidation = {
   CreateTaskValidation,
-  UpdateTaskValidation,
+  CompleteTaskValidation,
 };

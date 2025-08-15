@@ -17,6 +17,21 @@ const createTask = catchAsync(async (req, res) => {
   });
 });
 
+// complete task
+const completeTask = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const data = req.body;
+
+  const result = await TaskService.completeTask(id, data);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Task completed successfully",
+    data: result,
+  });
+});
+
 // update task
 const updateTask = catchAsync(async (req, res) => {
   const { id } = req.params;
@@ -64,6 +79,7 @@ const getAllTasks = catchAsync(async (req, res) => {
 
 export const TaskController = {
   createTask,
+  completeTask,
   updateTask,
   deleteTask,
   getAllTasks,

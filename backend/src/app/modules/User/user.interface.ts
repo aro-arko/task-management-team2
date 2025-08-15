@@ -6,7 +6,7 @@ export type TUser = {
   email: string;
   password: string;
   role: "admin" | "user";
-  points: number;
+  timeSpent: number;
   tasks: Types.ObjectId[];
   status?: "active" | "inactive";
   createdAt?: Date;
