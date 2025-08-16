@@ -45,4 +45,11 @@ router.put(
 // delete task
 router.delete("/delete/:id", auth(USER_ROLE.user), TaskController.deleteTask);
 
+// weekly report
+router.get(
+  "/report/weekly",
+  auth(USER_ROLE.user),
+  TaskController.getWeeklyReport
+);
+
 export const TaskRoutes = router;

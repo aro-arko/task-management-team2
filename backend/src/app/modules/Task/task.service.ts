@@ -4,6 +4,7 @@ import User from "../User/user.model";
 import { Task } from "./task.model";
 import mongoose from "mongoose";
 import QueryBuilder from "../../builder/QueryBuilder";
+import moment from "moment";
 
 const createTask = async (currentUser: JwtPayload, payLoad: TTask) => {
   const { email } = currentUser;
@@ -172,10 +173,51 @@ const getAllTasks = async (
   return tasks;
 };
 
+// get weekly report
+const getWeeklyReport = async (currentUser: JwtPayload) => {
+  const { email } = currentUser;
+
+  // Find user
+  const user = await User.findOne({ email }).select("_id");
+  if (!user) throw new Error("User not found");
+
+  // Get tasks for the week
+  const startOfWeek = moment().startOf("week");
+  const endOfWeek = moment().endOf("week");
+
+  const tasks = await Task.find({
+    userId: user._id,
+    createdAt: { $gte: startOfWeek, $lte: endOfWeek },
+    status: "completed",
+    category: "Self Improvement",
+  });
+
+  // Prepare report for each day of the week
+  const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const report = daysOfWeek.map((day, idx) => {
+    const dayStart = moment(startOfWeek).add(idx, "days").startOf("day");
+    const dayEnd = moment(dayStart).endOf("day");
+    const tasksForDay = tasks.filter(
+      (task) =>
+        moment(task.createdAt).isSameOrAfter(dayStart) &&
+        moment(task.createdAt).isSameOrBefore(dayEnd)
+    );
+    // Sum timeSpent in minutes
+    const totalMinutes = tasksForDay.reduce(
+      (sum, task) => sum + Math.floor((task.timeSpent || 0) / 60),
+      0
+    );
+    return { name: day, value: totalMinutes };
+  });
+
+  return report;
+};
+
 export const TaskService = {
   createTask,
   completeTask,
   updateTask,
   deleteTask,
   getAllTasks,
+  getWeeklyReport,
 };

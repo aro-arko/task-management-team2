@@ -9,4 +9,6 @@ export type TTask = {
   priority: "High" | "Medium" | "Low";
   timeSpent: number;
   status: "completed" | "pending" | "expired";
+  createdAt?: Date;
+  updatedAt?: Date;
 };

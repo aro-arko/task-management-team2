@@ -77,10 +77,24 @@ const getAllTasks = catchAsync(async (req, res) => {
   });
 });
 
+// get weekly report
+const getWeeklyReport = catchAsync(async (req, res) => {
+  const user = req.user;
+  const result = await TaskService.getWeeklyReport(user);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Weekly report fetched successfully",
+    data: result,
+  });
+});
+
 export const TaskController = {
   createTask,
   completeTask,
   updateTask,
   deleteTask,
   getAllTasks,
+  getWeeklyReport,
 };
